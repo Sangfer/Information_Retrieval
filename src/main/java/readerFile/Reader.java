@@ -1,4 +1,4 @@
-/*
+a/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -128,29 +128,32 @@ public class Reader {
             String doc=textSplittedByDoc.next();
             String []words;
             // Take off all escape Characters and replace them by space
-            doc=doc.replaceAll("\\r\\n|\\r|\\n", " ");
+            doc=doc.replaceAll("\\r\\n\\t|\\r|\\n|\\t", " ");
             //Simplest delimiter: multiple space. Need to be improved for removing words from punctuation. Eg: here we get word like "animal." which will not match "animal"
             words = doc.split("[ ]+");
             
             for(String word: words){
                 if(word.matches("(<docno>)[0-9]*(<\\/docno>)")){
-                     docId = StringUtils.substringBetween(word, "<docno>", "</docno>");
+                    docId = StringUtils.substringBetween(word, "<docno>", "</docno>");
                 }
-                 System.out.println(word);
-                //Word does not exist in the collection
-                if(mapWord.get(word)==null){
-                    HashMap<String,Integer> mapDocReference = new HashMap<String,Integer>();
-                    mapDocReference.put(docId,1);
-                    mapWord.put(word, mapDocReference);
-                }
-                
-                if(mapWord.get(word).get(docId)==null){
-                    mapWord.get(word).put(docId,1);
-                } 
-                else {
-                    Map<String, Integer> mapDocReference=mapWord.get(word);
-                    Integer previousValue = mapDocReference.get(docId);
-                    mapDocReference.put(docId, previousValue == null ? 1 : previousValue + 1);
+                else if(word.compareTo("</doc>") != 0){
+                    System.out.println(word);
+                    word= word.toLowerCase();
+                   //Word does not exist in the collection
+                   if(mapWord.get(word)==null){
+                       HashMap<String,Integer> mapDocReference = new HashMap<>();
+                       mapDocReference.put(docId,1);
+                       mapWord.put(word, mapDocReference);
+                   }
+
+                   else if(mapWord.get(word).get(docId)==null){
+                       mapWord.get(word).put(docId,1);
+                   } 
+                   else {
+                       Map<String, Integer> mapDocReference=mapWord.get(word);
+                       Integer previousValue = mapDocReference.get(docId);
+                       mapDocReference.put(docId, previousValue == null ? 1 : previousValue + 1);
+                    }
                 }
             }
         }
