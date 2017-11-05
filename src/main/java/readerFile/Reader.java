@@ -1,4 +1,4 @@
-a/*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,22 +30,27 @@ public class Reader {
     public String fileToRead;
     public String fileRequest;
     public Map<String, Map<String, Integer>> mapWord;
+    public List<Request> listRequest;
     
 
     public Reader(String fileToRead, String fileRequest){
         this.fileToRead=fileToRead;
         this.fileRequest=fileRequest;
         this.mapWord= new HashMap<>();
+        this.listRequest= new ArrayList<>();
     }
     
     
+  
     
+    
+    /****************************PART CONCERNING THE REQUEST FILE ****************************
     
     /**
      * From the file given, get the list of request
      * @return a List of request identified by a code and a List of words
      */
-    public List<Request> getRequestFromFileRequest(){
+    public void getRequestFromFileRequest(){
         
         List<Request> listRequest= new ArrayList<>();
 
@@ -64,47 +70,46 @@ public class Reader {
         {
             
            String sentence=fin.next();
-           String[] splittedRequest=sentence.split(":");
-           String[] arrayWords=splittedRequest[1].split(" ");
+           String code = sentence.split(":")[0];
+           List<String> words = Arrays.asList(sentence.split(":")[1].split(" "));
            
-           List<Word> words= new ArrayList<>();
-           for(String word: arrayWords){
-              words.add(new Word(word,0));
-           }
-           
-           Request request= new Request(splittedRequest[0],words);
+           Request request= new Request(code,words);
            listRequest.add(request);
         }
         fin.close();
-        return listRequest;
+        this.listRequest=listRequest;
     }
+    
+    
     
      /**
      * From the file given, get the list of request
      * @param mylist the list of Request
      * @return a List of request identified by a code and a List of words
      */   
-     public static void checkConstructorRequest(List<Request> mylist){
-            for(Request req: mylist){
+     public void checkConstructorRequest(){
+            for(Request req: listRequest){
                 System.out.print("Requête CODE: ");
                 System.out.println(req.getCode());
-                List<Word> words= req.getWords();
-                for(Word word: words){
+                List<String> words= req.getWords();
+                for(String word: words){
                     System.out.println(word);
                 }
                 System.out.println("................. \n\n");
             }
         }
     
+     
+     
+     
+    /****************************PART CONCERNING THE COLLECTION TO READ ****************************
+     
     
    /**
     * Read word by word the file to check
-     * @param requests
-    * @throws Exception 
+    * @throws Exception concerning opening of the file
     */ 
-    
-    
-    public void readFileToCheck(List<Request> requests) throws Exception
+    public void getMapWordsFromCollection() throws Exception
     {  
              
         
@@ -137,33 +142,54 @@ public class Reader {
                     docId = StringUtils.substringBetween(word, "<docno>", "</docno>");
                 }
                 else if(word.compareTo("</doc>") != 0){
-                    System.out.println(word);
                     word= word.toLowerCase();
                    //Word does not exist in the collection
-                   if(mapWord.get(word)==null){
+                   if(this.mapWord.get(word)==null){
                        HashMap<String,Integer> mapDocReference = new HashMap<>();
                        mapDocReference.put(docId,1);
-                       mapWord.put(word, mapDocReference);
+                       this.mapWord.put(word, mapDocReference);
                    }
 
-                   else if(mapWord.get(word).get(docId)==null){
-                       mapWord.get(word).put(docId,1);
+                   else if(this.mapWord.get(word).get(docId)==null){
+                       this.mapWord.get(word).put(docId,1);
                    } 
                    else {
-                       Map<String, Integer> mapDocReference=mapWord.get(word);
+                       Map<String, Integer> mapDocReference=this.mapWord.get(word);
                        Integer previousValue = mapDocReference.get(docId);
                        mapDocReference.put(docId, previousValue == null ? 1 : previousValue + 1);
                     }
                 }
             }
         }
-            
+    }
+    
+    
+    
+    
+    
+     /**
+     * PrintOut all the element from the map
+     */   
+     public void checkMapWord(){
+        this.mapWord.forEach((k, v) -> System.out.println((k + ":" + v)));
+    }
+     
+     
+     /**
+      * Write all result from previous function into a file called result.txt
+      * @throws FileNotFoundException 
+      */
+     public void writeResultMapIntoAText() throws FileNotFoundException{
         File file = new File("result.txt");
         FileOutputStream fos = new FileOutputStream(file);
         PrintStream ps = new PrintStream(fos);
         System.setOut(ps);
-        mapWord.forEach((k, v) -> System.out.println((k + ":" + v)));        
-    
-    }
+        checkMapWord();
+     }
+     
+     
+     
+     
+     
     
 }

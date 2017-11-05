@@ -15,12 +15,12 @@ import treatments.Word;
 
 public class Request {
     public String code;
-    public List<Word> words;
+    public List<String> words;
     
     public Request(){}
 
     
-    public Request(String code, List<Word> words) {
+    public Request(String code, List<String> words) {
         this.code = code;
         this.words = words;
     }
@@ -34,11 +34,11 @@ public class Request {
         this.code = code;
     }
 
-    public List<Word> getWords() {
+    public List<String> getWords() {
         return words;
     }
 
-    public void setWords(List<Word> words) {
+    public void setWords(List<String> words) {
         this.words = words;
     }
 

@@ -5,9 +5,8 @@
  */
 package com.mycompany.project_information_retrieval;
 
-import java.util.List;
 import readerFile.Reader;
-import readerFile.Request;
+import treatments.MatchWords;
 
 
 /**
@@ -21,13 +20,11 @@ public class RI_Project {
      */
     
     public static void main(String[] args) throws Exception {
-        List<Request> listRequest;
-        Reader reader= new Reader("C:\\Users\\Alex\\Downloads\\Text_Only_Ascii_Coll_MWI_NoSem\\Text_Only_Ascii_Coll_MWI_NoSem.txt", "C:\\Users\\Alex\\Downloads\\request.txt");
-
-        listRequest=reader.getRequestFromFileRequest();
-        Reader.checkConstructorRequest(listRequest);
-        reader.readFileToCheck(listRequest);
-
+        Reader reader= new Reader("C:\\Users\\Alex\\Downloads\\Text_Only_Ascii_Coll_MWI_NoSem\\Text_Only_Ascii_Coll_MWI_NoSem", "C:\\Users\\Alex\\Downloads\\request.txt");
+        reader.getRequestFromFileRequest();
+        reader.checkConstructorRequest();
+        reader.getMapWordsFromCollection();
+        MatchWords.MatchRequest(reader);
     }
     
 }

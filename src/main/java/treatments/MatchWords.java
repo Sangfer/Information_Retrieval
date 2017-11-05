@@ -7,6 +7,7 @@ package treatments;
 
 import java.util.List;
 import readerFile.Request;
+import readerFile.Reader;
 
 
 /**
@@ -31,13 +32,18 @@ public class MatchWords {
     }
     
     
-    public static void tokenMatchRequest(Request request, String token){
-        List<Word> words=request.getWords();
-        for(Word word: words){
-            if(word.getToken().compareTo(token)==0){
-                word.incrementCounter();
-            }
-        }
+    public static void MatchRequest(Reader reader){
+       for(Request request: reader.listRequest){
+           for(String word: request.words){
+               if(reader.mapWord.get(word)!=null){
+                   System.out.println("Word : " + word +" has been found ");
+                   System.out.println(reader.mapWord.get(word).toString());
+                   System.out.println("END OF WORD");
+               }
+            System.out.println("END OF REQUEST");
+   
+           }
+       }
     }
     
     
